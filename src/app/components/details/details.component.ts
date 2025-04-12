@@ -1,12 +1,14 @@
-import { Component,inject,OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HousingService } from '../../housing.service';
 import { Housinglocation } from '../../housinglocation';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'; 
 
 @Component({
   selector: 'app-details',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule], 
   templateUrl: './details.component.html',
   styleUrl: './details.component.css',
   providers: [HousingService]
@@ -17,10 +19,13 @@ export class DetailsComponent implements OnInit {
   housingLocation: Housinglocation | undefined;
   housingLocationId = -1;
 
+  applyForm = new FormGroup({ 
+    firstName: new FormControl(''),
+    lastName: new FormControl(''),
+    email: new FormControl('')
+  });
 
-  constructor() {
-  
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.housingLocationId = Number(this.route.snapshot.params['id']);
@@ -29,4 +34,11 @@ export class DetailsComponent implements OnInit {
     });
   }
 
+  submitApplication() {
+    this.housingService.submitApplication(
+      this.applyForm.value.firstName ?? '',
+      this.applyForm.value.lastName ?? '',
+      this.applyForm.value.email ?? ''
+    );
+  }
 }
